@@ -5,6 +5,7 @@
 #include "line-raster.h"
 #include "vector.h"
 #include "triangle-raster.h"
+#include "scanline-raster.h"
 
 scene_t* scene_create(int screen_width, int screen_height, SDL_Renderer* r) {
     scene_t* scene = (scene_t*)malloc(sizeof(scene_t));
@@ -77,6 +78,41 @@ void draw_suzanne(scene_t* s, float delta_time, bool wire_frame) {
     }
 }
 
+void draw_suzanne_scanline(scene_t* s, float delta_time) {
+    color_t red = {255, 0, 0, 255};
+
+    obj_t* obj = s->suzanne;
+
+    static float rotation = 0.f;
+    rotation +=  2.f * delta_time;
+
+     for(int i=0; i < obj->face_count; ++i) {
+        vector3f_t* lp1 = (vector3f_t*)&(obj->triangles[i].v1.position);
+        vector3f_t* lp2 = (vector3f_t*)&(obj->triangles[i].v2.position);
+        vector3f_t* lp3 = (vector3f_t*)&(obj->triangles[i].v3.position);
+
+        //scale - rotate - traslate
+        vector3f_t wp1 = vector3f_mult(lp1, 2);
+        vector3f_t wp2 = vector3f_mult(lp2, 2);
+        vector3f_t wp3 = vector3f_mult(lp3, 2);
+
+        wp1 = vector3f_rotate_y(&wp1, rotation);
+        wp2 = vector3f_rotate_y(&wp2, rotation);
+        wp3 = vector3f_rotate_y(&wp3, rotation);
+
+        vector3f_t transl = (vector3f_t){0, 0, 5.f};
+        wp1 = vector3f_sub(&wp1, &transl);
+        wp2 = vector3f_sub(&wp2, &transl);
+        wp3 = vector3f_sub(&wp3, &transl);
+        
+        vector2_t p1 = camera_world_to_screen_space(s->camera, wp1);
+        vector2_t p2 = camera_world_to_screen_space(s->camera, wp2);
+        vector2_t p3 = camera_world_to_screen_space(s->camera, wp3);
+
+        scanline_raster(s->screen, &p1, &p2, &p3);
+    }
+}
+
 void scene_update(scene_t* s, float delta_time) {
     screen_clear(s->screen);
    
@@ -120,7 +156,8 @@ void scene_update(scene_t* s, float delta_time) {
 
     //draw_quad(s, delta_time);
 
-    draw_suzanne(s, delta_time, true);
+    //draw_suzanne(s, delta_time, true);
+    draw_suzanne_scanline(s, delta_time);
    
     screen_blit(s->screen);
 }
