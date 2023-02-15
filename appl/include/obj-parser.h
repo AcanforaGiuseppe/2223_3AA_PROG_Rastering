@@ -35,6 +35,7 @@ typedef struct {
 } obj_t;
 
 obj_t* obj_parser_parse(const char* path);
+void obj_parser_free(obj_t* path);
 
 #ifdef OBJ_PARSER_IMPLEMENTATION
 obj_t* obj_parser_parse(const char* path) {
@@ -184,4 +185,11 @@ obj_t* obj_parser_parse(const char* path) {
 
     return mesh;
 }
+
+void obj_parser_free(obj_t* obj) 
+{
+    free(obj->triangles);
+    free(obj);
+}
+
 #endif

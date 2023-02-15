@@ -1,7 +1,6 @@
 #include "camera.h"
 #include <math.h>
-
-#define M_PI 3.14159265358979323846264338327950288
+#include "aiv-math.h"
 
 camera_t* camera_new(float vertical_fov_degrees, int screen_width, int screen_height) 
 {
@@ -15,7 +14,7 @@ camera_t* camera_new(float vertical_fov_degrees, int screen_width, int screen_he
 
 vector2_t camera_world_to_screen_space(camera_t* camera, vector3f_t wp) 
 {
-    vector3f_t camera_point = vector3f_sub(wp, camera->position);
+    vector3f_t camera_point = vector3f_sub(&wp, &camera->position);
 
     float plane_x = camera_point.x / -camera_point.z;
     float plane_y = camera_point.y / -camera_point.z;
