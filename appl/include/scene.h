@@ -4,12 +4,14 @@
 #include "screen.h"
 #include "camera.h"
 #include "obj-parser.h"
+#include "aiv-texture.h"
 
 typedef struct {
     screen_t* screen;
     camera_t* camera;
     obj_t* quad;
     obj_t* suzanne;
+    texture_t* smile_texture;
 } scene_t;
 
 scene_t* scene_create(int w, int h, SDL_Renderer*);
