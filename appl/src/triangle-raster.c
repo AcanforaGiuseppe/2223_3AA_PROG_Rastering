@@ -26,7 +26,7 @@ void bbox_triangle_raster(screen_t* screen, vector2_t p1, vector2_t p2, vector2_
             vector2_t point = {x, y};
             if (bbox_is_point_in_triangle(point, p1, p2, p3)) 
             {
-                screen_put_pixel(screen, x, y, color);
+                screen_put_pixel(screen, x, y, 0.f, color);
             }
         }
     }

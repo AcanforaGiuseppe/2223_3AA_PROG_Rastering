@@ -36,7 +36,6 @@ void draw_quad(scene_t* s, float delta_time) {
     }
 }
 
-
 void draw_suzanne(scene_t* s, float delta_time, bool wire_frame) {
     color_t red = {255, 0, 0, 255};
 
@@ -105,11 +104,30 @@ void draw_suzanne_scanline(scene_t* s, float delta_time) {
         wp2 = vector3f_sub(&wp2, &transl);
         wp3 = vector3f_sub(&wp3, &transl);
         
-        vector2_t p1 = camera_world_to_screen_space(s->camera, wp1);
-        vector2_t p2 = camera_world_to_screen_space(s->camera, wp2);
-        vector2_t p3 = camera_world_to_screen_space(s->camera, wp3);
+        vector2_t sp1 = camera_world_to_screen_space(s->camera, wp1);
+        vector2_t sp2 = camera_world_to_screen_space(s->camera, wp2);
+        vector2_t sp3 = camera_world_to_screen_space(s->camera, wp3);
 
-        scanline_raster(s->screen, &p1, &p2, &p3);
+        vector3f_t cp1 = camera_world_to_camera_space(s->camera, &wp1);
+        vector3f_t cp2 = camera_world_to_camera_space(s->camera, &wp2);
+        vector3f_t cp3 = camera_world_to_camera_space(s->camera, &wp3);
+
+        vertex_t v1;
+        v1.screen_pos = &sp1;
+        v1.color =  &COLOR_RED;
+        v1.z_pos = cp1.z;
+
+        vertex_t v2;
+        v2.screen_pos = &sp2;
+        v2.color =  &COLOR_GREEN;
+        v2.z_pos = cp2.z;
+
+        vertex_t v3;
+        v3.screen_pos = &sp3;
+        v3.color = &COLOR_BLUE;
+        v3.z_pos = cp3.z;
+
+        scanline_raster(s->screen, &v1, &v2, &v3);
     }
 }
 

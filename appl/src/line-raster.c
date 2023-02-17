@@ -17,7 +17,7 @@ void dda_line_raster(screen_t* screen, int x1, int y1, int x2, int y2, color_t c
     
     for(int i=0; i <= steps; ++i) 
     {
-        screen_put_pixel(screen, x, y, color);
+        screen_put_pixel(screen, x, y, 0.f, color);
         x += step_x;
         y += step_y;
     }

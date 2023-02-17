@@ -36,3 +36,8 @@ vector2_t camera_world_to_screen_space(camera_t* camera, vector3f_t wp)
 
     return (vector2_t){screen_x, screen_y};
 }
+
+vector3f_t camera_world_to_camera_space(camera_t* camera, vector3f_t* wp) 
+{
+    return vector3f_sub(wp, &camera->position);
+}

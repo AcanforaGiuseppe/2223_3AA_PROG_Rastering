@@ -2,5 +2,13 @@
 
 #include "screen.h"
 #include "vector.h"
+#include "color.h"
 
-void scanline_raster(screen_t* screen, vector2_t* p1, vector2_t* p2, vector2_t* p3);
+typedef struct {
+    vector2_t* screen_pos;
+    color_t*  color;
+    float z_pos;
+} vertex_t;
+
+
+void scanline_raster(screen_t* screen, vertex_t* v1, vertex_t* v2, vertex_t* v3);
