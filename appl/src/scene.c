@@ -185,7 +185,6 @@ void draw_quad_texturized(scene_t* s, float delta_time) {
         v3.text_coord = (vector2f_t*)&(t->v3.uv);
 
         scanline_raster(&gpu, &v1, &v2, &v3);
-
     }
 }
 

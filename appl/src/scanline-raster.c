@@ -1,4 +1,5 @@
 #include "scanline-raster.h"
+#include <stdio.h>
 
 void _sort_by_y(vertex_t** v1, vertex_t** v2, vertex_t** v3) 
 {   
@@ -80,25 +81,22 @@ void _interpolate_row(vgpu_t* gpu, int y, vertex_t* left_edge_v1, vertex_t* left
     if (gpu->flags & VGPU_FLAG_TEXTURE) 
     {
         left_uv = _interpolate_vector2f(left_edge_v1->text_coord, left_edge_v2->text_coord, left_gradient_y);
-        right_uv = _interpolate_vector2f(left_edge_v1->text_coord, left_edge_v2->text_coord, left_gradient_y);
+        right_uv = _interpolate_vector2f(right_edge_v1->text_coord, right_edge_v2->text_coord, right_gradient_y); 
     }
-
 
     for(int x = left_x; x <= right_x; ++x) 
     {
-        //color_t red = (color_t){255, 0, 0, 255};
         float gradient_x = 1.f;
         if (left_x < right_x) 
         {
             gradient_x = (float)(x - left_x) / (float)(right_x - left_x);
         }
-        float   sampled_z     = _interpolate_scalar(left_z, right_z, gradient_x);
+        float sampled_z = _interpolate_scalar(left_z, right_z, gradient_x);
 
         color_t sampled_color;
         if (gpu->flags & VGPU_FLAG_COLOR) 
         {
             sampled_color = _interpolate_color(&left_color, &right_color, gradient_x);
-
         } 
         
         if (gpu->flags & VGPU_FLAG_TEXTURE) 
@@ -106,26 +104,10 @@ void _interpolate_row(vgpu_t* gpu, int y, vertex_t* left_edge_v1, vertex_t* left
             vector2f_t uv = _interpolate_vector2f(&left_uv, &right_uv, gradient_x);
             texture_t* text = gpu->texture;
 
-            sampled_color.r = 255;
-            sampled_color.g = 0;
-            sampled_color.b = 0;
-            sampled_color.a = 255;
-
             int text_x = (int)( (float)text->width * uv.x );
-            int text_y = (int)( (float)text->height * uv.y);
+            int text_y = (int)( (float)text->height * (1.f - uv.y));
 
             int text_index = (text_y * text->width + text_x) * text->pixel_size;
-            if (text_index > 1000000) {
-                printf("Greather: %d\n" + text_index);
-
-            }
-            if (text_index < 0) {
-                puts("< 0");
-            }
-
-            //sampled_color.r = text->data[3];
-            /*
-            */
             sampled_color.r = text->data[text_index + 0];
             sampled_color.g = text->data[text_index + 1];
             sampled_color.b = text->data[text_index + 2];
