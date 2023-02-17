@@ -104,8 +104,8 @@ void _interpolate_row(vgpu_t* gpu, int y, vertex_t* left_edge_v1, vertex_t* left
             vector2f_t uv = _interpolate_vector2f(&left_uv, &right_uv, gradient_x);
             texture_t* text = gpu->texture;
 
-            int text_x = (int)( (float)text->width * uv.x );
-            int text_y = (int)( (float)text->height * (1.f - uv.y));
+            int text_x = (int)( (float)text->width * uv.x ) % text->width; //protect and take account for uv rolling 
+            int text_y = (int)( (float)text->height * (1.f - uv.y)) % text->height; //protect and take account for uv rolling
 
             int text_index = (text_y * text->width + text_x) * text->pixel_size;
             sampled_color.r = text->data[text_index + 0];
