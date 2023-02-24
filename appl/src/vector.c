@@ -30,3 +30,19 @@ vector3f_t vector3f_mult(vector3f_t* v, float scalar)
     result.z = v->z * scalar;
     return result;
 }
+
+vector3f_t vector3f_norm(vector3f_t* v) 
+{
+    float inv_m = 1.f / vector3f_magn(v);
+    return vector3f_mult(v, inv_m);
+}
+
+float vector3f_magn(vector3f_t* v)
+{
+    return sqrtf(vector3f_dot(v, v));
+}
+
+float vector3f_dot(vector3f_t* v1, vector3f_t* v2)
+{
+    return v1->x * v2->x + v1->y * v2->y + v1->z * v1->z;
+}

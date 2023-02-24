@@ -28,3 +28,10 @@ int det(vector2_t p, vector2_t v1, vector2_t v2)
 
     return vx * py - vy * px;
 }
+
+float clampf(float v, float min, float max) 
+{
+    if (v < min) return min;
+    if (v > max) return max;
+    return v;
+}

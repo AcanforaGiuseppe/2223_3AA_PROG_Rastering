@@ -12,6 +12,8 @@ typedef struct {
     obj_t* quad;
     obj_t* suzanne;
     texture_t* smile_texture;
+    obj_t* trup;
+    texture_t* trup_texture;
 } scene_t;
 
 scene_t* scene_create(int w, int h, SDL_Renderer*);

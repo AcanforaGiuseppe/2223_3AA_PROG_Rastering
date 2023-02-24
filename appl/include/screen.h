@@ -19,3 +19,4 @@ void screen_free(screen_t* s);
 void screen_put_pixel(screen_t* screen, int x, int y, float z, color_t color);
 void screen_blit(screen_t* screen);
 void screen_clear(screen_t* screen);
+void screen_clear_color(screen_t* screen, color_t* color);

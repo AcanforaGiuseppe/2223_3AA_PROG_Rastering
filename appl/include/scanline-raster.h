@@ -10,6 +10,8 @@ typedef struct {
     color_t*  color;
     float z_pos;
     vector2f_t* text_coord;
+    vector3f_t* world_norm;
+    vector3f_t* world_pos;
 } vertex_t;
 
 

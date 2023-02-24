@@ -16,6 +16,9 @@ scene_t* scene_create(int screen_width, int screen_height, SDL_Renderer* r) {
     scene->quad = obj_parser_parse("bin\\appl\\resources\\quad.obj");
     scene->suzanne = obj_parser_parse("bin\\appl\\resources\\suzanne.obj");
     scene->smile_texture = texture_load("bin\\appl\\resources\\smile.png");
+
+    scene->trup = obj_parser_parse("bin\\appl\\resources\\stormtrooper.obj");
+    scene->trup_texture = texture_load("bin\\appl\\resources\\stormtrooper.png");
     return scene;
 }
 
@@ -188,9 +191,82 @@ void draw_quad_texturized(scene_t* s, float delta_time) {
     }
 }
 
+void draw_trup_texturized(scene_t* s, float delta_time) {
+    static vector3f_t transl = (vector3f_t){0, 2.f, 4.f};
+
+    static float rotation = 0.f;
+    rotation +=  10.f * delta_time;
+
+    static vector3f_t light = (vector3f_t){2.f, 0.f, -4.f};
+
+    vgpu_t gpu;
+    gpu.screen = s->screen;
+    gpu.texture = s->trup_texture;
+    gpu.flags = VGPU_FLAG_TEXTURE;
+    gpu.point_light_pos = &light;
+
+    obj_t* obj = s->trup;
+
+    for(int i=0; i < obj->face_count; ++i) 
+    {
+        obj_triangle_t* t = &(obj->triangles[i]);
+
+        vector3f_t* lp1 = (vector3f_t*)&(t->v1.position);
+        vector3f_t* lp2 = (vector3f_t*)&(t->v2.position);
+        vector3f_t* lp3 = (vector3f_t*)&(t->v3.position);
+
+        vector3f_t wp1 = vector3f_rotate_y(lp1, rotation);
+        vector3f_t wp2 = vector3f_rotate_y(lp2, rotation);
+        vector3f_t wp3 = vector3f_rotate_y(lp3, rotation);
+
+        wp1 = vector3f_sub(&wp1, &transl);
+        wp2 = vector3f_sub(&wp2, &transl);
+        wp3 = vector3f_sub(&wp3, &transl);
+
+        //Compute World Normals
+        vector3f_t wn1 = vector3f_rotate_y((vector3f_t*)&(t->v1.normal), rotation);
+        vector3f_t wn2 = vector3f_rotate_y((vector3f_t*)&(t->v2.normal), rotation);
+        vector3f_t wn3 = vector3f_rotate_y((vector3f_t*)&(t->v3.normal), rotation);
+
+
+        vector2_t sp1 = camera_world_to_screen_space(s->camera, wp1);
+        vector2_t sp2 = camera_world_to_screen_space(s->camera, wp2);
+        vector2_t sp3 = camera_world_to_screen_space(s->camera, wp3);
+
+        vector3f_t cp1 = camera_world_to_camera_space(s->camera, &wp1);
+        vector3f_t cp2 = camera_world_to_camera_space(s->camera, &wp2);
+        vector3f_t cp3 = camera_world_to_camera_space(s->camera, &wp3);
+
+        vertex_t v1;
+        v1.screen_pos = &sp1;
+        v1.z_pos = cp1.z;
+        v1.text_coord = (vector2f_t*)&(t->v1.uv);
+        v1.world_norm = &wn1;
+        v1.world_pos = &wp1;
+
+        vertex_t v2;
+        v2.screen_pos = &sp2;
+        v2.z_pos = cp2.z;
+        v2.text_coord = (vector2f_t*)&(t->v2.uv);
+        v2.world_norm = &wn2;
+        v2.world_pos = &wp2;
+
+        vertex_t v3;
+        v3.screen_pos = &sp3;
+        v3.z_pos = cp3.z;
+        v3.text_coord = (vector2f_t*)&(t->v3.uv);
+        v3.world_norm = &wn3;
+        v3.world_pos = &wp3;
+
+        scanline_raster(&gpu, &v1, &v2, &v3);
+    }
+}
+
+
 
 void scene_update(scene_t* s, float delta_time) {
-    screen_clear(s->screen);
+    //screen_clear(s->screen);
+    screen_clear_color(s->screen, &COLOR_GRAY);
    
     color_t red = {255, 0, 0, 255};
 
@@ -234,7 +310,8 @@ void scene_update(scene_t* s, float delta_time) {
 
     //draw_suzanne(s, delta_time, true);
     //draw_suzanne_scanline(s, delta_time);
-    draw_quad_texturized(s, delta_time);
+    //draw_quad_texturized(s, delta_time);
+    draw_trup_texturized(s, delta_time);
    
     screen_blit(s->screen);
 }

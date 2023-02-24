@@ -12,4 +12,5 @@ typedef struct {
     screen_t* screen;
     texture_t* texture;
     int flags;
+    vector3f_t* point_light_pos;
 } vgpu_t;
