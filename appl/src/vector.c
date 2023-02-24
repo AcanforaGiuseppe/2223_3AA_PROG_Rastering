@@ -44,5 +44,5 @@ float vector3f_magn(vector3f_t* v)
 
 float vector3f_dot(vector3f_t* v1, vector3f_t* v2)
 {
-    return v1->x * v2->x + v1->y * v2->y + v1->z * v1->z;
+    return v1->x * v2->x + v1->y * v2->y + v1->z * v2->z;
 }
