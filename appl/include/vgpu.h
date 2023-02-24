@@ -13,4 +13,5 @@ typedef struct {
     texture_t* texture;
     int flags;
     vector3f_t* point_light_pos;
+    vector3f_t* camera_pos;
 } vgpu_t;

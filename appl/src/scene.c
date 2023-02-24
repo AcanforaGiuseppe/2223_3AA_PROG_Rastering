@@ -192,7 +192,7 @@ void draw_quad_texturized(scene_t* s, float delta_time) {
 }
 
 void draw_trup_texturized(scene_t* s, float delta_time) {
-    static vector3f_t transl = (vector3f_t){0, 2.f, 4.f};
+    static vector3f_t transl = (vector3f_t){0, 0.f, 4.f};
 
     static float rotation = 0.f;
     rotation +=  10.f * delta_time;
@@ -204,6 +204,7 @@ void draw_trup_texturized(scene_t* s, float delta_time) {
     gpu.texture = s->trup_texture;
     gpu.flags = VGPU_FLAG_TEXTURE;
     gpu.point_light_pos = &light;
+    gpu.camera_pos = &(s->camera->position);
 
     obj_t* obj = s->trup;
 
@@ -236,6 +237,9 @@ void draw_trup_texturized(scene_t* s, float delta_time) {
         vector3f_t cp1 = camera_world_to_camera_space(s->camera, &wp1);
         vector3f_t cp2 = camera_world_to_camera_space(s->camera, &wp2);
         vector3f_t cp3 = camera_world_to_camera_space(s->camera, &wp3);
+
+        if (!triangle_is_within_camera(s->camera, &sp1, cp1.z, &sp2, cp2.z, &sp3, cp3.z)) continue;
+        if (!triangle_is_facing_camera(&cp1, &cp2, &cp3)) continue;
 
         vertex_t v1;
         v1.screen_pos = &sp1;

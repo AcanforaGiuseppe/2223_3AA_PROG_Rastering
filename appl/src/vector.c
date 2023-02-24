@@ -46,3 +46,21 @@ float vector3f_dot(vector3f_t* v1, vector3f_t* v2)
 {
     return v1->x * v2->x + v1->y * v2->y + v1->z * v2->z;
 }
+
+vector3f_t vector3f_refl(vector3f_t* i, vector3f_t* n)
+{
+    //R = I – 2 * dot(I,N) * N
+    float dot2 = 2.f * vector3f_dot(i, n);
+    vector3f_t dot2n = vector3f_mult(n, dot2);
+    return vector3f_sub(i, &dot2n);
+}
+
+vector3f_t vector3f_cross(vector3f_t* v1, vector3f_t* v2) 
+{
+    vector3f_t r;
+    r.x = v1->y * v2->z - v1->z * v2->y;
+    r.y = v1->z * v2->x - v1->x * v2->z;
+    r.z = v1->x * v2->y - v1->y * v2->x;
+    return r;
+}
+

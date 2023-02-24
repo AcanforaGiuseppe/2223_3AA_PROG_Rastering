@@ -19,3 +19,13 @@ color_t color_add(color_t* c1, color_t* c2)
     result.a = c1->a + c2->a;
     return result;
 }
+
+color_t color_clamp(color_t* c)
+{
+    color_t result;
+    result.r = c->r > 255 ? 255 : c->r;
+    result.g = c->g > 255 ? 255 : c->g;
+    result.b = c->b > 255 ? 255 : c->b;
+    result.a = c->a > 255 ? 255 : c->a;
+    return result;
+}

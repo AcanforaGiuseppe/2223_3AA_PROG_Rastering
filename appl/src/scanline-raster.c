@@ -146,7 +146,24 @@ void _interpolate_row(vgpu_t* gpu, int y, vertex_t* left_edge_v1, vertex_t* left
         float lambert = clampf(cosLN, 0.f, 1.f);
         color_t diffuse = color_mult(&sampled_color, lambert);
 
-        color_t phong = color_add(&ambient, &diffuse);
+        //3. Specular
+        vector3f_t dir_to_eye = vector3f_sub(gpu->camera_pos, &world_pos);
+        dir_to_eye = vector3f_norm(&dir_to_eye);
+
+        vector3f_t dir_light_to_point = vector3f_mult(&dir_to_light, -1.f);
+        vector3f_t dir_to_light_refl = vector3f_refl(&dir_light_to_point, &world_norm); //already normalized becouse of dir_to_light
+
+        float cosER = vector3f_dot(&dir_to_eye, &dir_to_light_refl);
+        float specular_value = clampf(cosER, 0.f, 1.f);
+        color_t specular_color = (color_t){255, 255, 255, 255};
+        color_t specular = color_mult(&specular_color, powf(specular_value, 50.f));
+
+        color_t phong = (color_t){0, 0, 0, 0};
+        phong = color_add(&phong, &ambient);
+        phong = color_add(&phong, &diffuse);
+        phong = color_add(&phong, &specular);
+        phong = color_clamp(&phong);
+
         screen_put_pixel(gpu->screen, x, y, sampled_z, phong);
     }
 }
