@@ -2,7 +2,8 @@
 #include <SDL.h>
 #include "color.h"
 
-typedef struct {
+typedef struct
+{
     int width;
     int height;
     SDL_Renderer* renderer;

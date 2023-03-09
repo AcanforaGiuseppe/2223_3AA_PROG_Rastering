@@ -1,7 +1,8 @@
 #pragma once
 #include <SDL.h>
 
-typedef struct {
+typedef struct
+{
     Uint8 r;
     Uint8 g;
     Uint8 b;

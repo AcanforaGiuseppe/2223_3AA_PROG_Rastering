@@ -7,7 +7,9 @@
 texture_t* texture_load(const char* path) 
 {
     SDL_Surface* surface = IMG_Load(path);
-    if (surface == NULL) {
+
+    if (surface == NULL)
+    {
         puts("FAILED TO LOAD IMAGE!!");
         return NULL;
     }
@@ -25,5 +27,3 @@ texture_t* texture_load(const char* path)
     SDL_FreeSurface(surface);
     return text;
 }
-
-//TODO: implment free

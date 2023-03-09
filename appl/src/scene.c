@@ -8,7 +8,8 @@
 #include "scanline-raster.h"
 #include "vgpu.h"
 
-scene_t* scene_create(int screen_width, int screen_height, SDL_Renderer* r) {
+scene_t* scene_create(int screen_width, int screen_height, SDL_Renderer* r)
+{
     scene_t* scene = (scene_t*)malloc(sizeof(scene_t));
     scene->screen = screen_new(screen_width, screen_height, r);
     scene->camera = camera_new(60, screen_width, screen_height);
@@ -16,16 +17,18 @@ scene_t* scene_create(int screen_width, int screen_height, SDL_Renderer* r) {
     scene->quad = obj_parser_parse("bin\\appl\\resources\\quad.obj");
     scene->suzanne = obj_parser_parse("bin\\appl\\resources\\suzanne.obj");
     scene->smile_texture = texture_load("bin\\appl\\resources\\smile.png");
-
     scene->trup = obj_parser_parse("bin\\appl\\resources\\stormtrooper.obj");
     scene->trup_texture = texture_load("bin\\appl\\resources\\stormtrooper.png");
+
     return scene;
 }
 
-void draw_quad(scene_t* s, float delta_time) {
+void draw_quad(scene_t* s, float delta_time)
+{
     color_t green = {0, 255, 0, 255};
 
-     for(int i=0; i < s->quad->face_count; ++i) {
+     for(int i=0; i < s->quad->face_count; ++i)
+     {
         vector3f_t* wp1 = (vector3f_t*)&(s->quad->triangles[i].v1.position);
         vector3f_t* wp2 = (vector3f_t*)&(s->quad->triangles[i].v2.position);
         vector3f_t* wp3 = (vector3f_t*)&(s->quad->triangles[i].v3.position);
@@ -41,7 +44,8 @@ void draw_quad(scene_t* s, float delta_time) {
     }
 }
 
-void draw_suzanne(scene_t* s, float delta_time, bool wire_frame) {
+void draw_suzanne(scene_t* s, float delta_time, bool wire_frame)
+{
     color_t red = {255, 0, 0, 255};
 
     obj_t* obj = s->suzanne;
@@ -49,12 +53,13 @@ void draw_suzanne(scene_t* s, float delta_time, bool wire_frame) {
     static float rotation = 0.f;
     rotation +=  2.f * delta_time;
 
-     for(int i=0; i < obj->face_count; ++i) {
+     for(int i=0; i < obj->face_count; ++i)
+     {
         vector3f_t* lp1 = (vector3f_t*)&(obj->triangles[i].v1.position);
         vector3f_t* lp2 = (vector3f_t*)&(obj->triangles[i].v2.position);
         vector3f_t* lp3 = (vector3f_t*)&(obj->triangles[i].v3.position);
 
-        //scale - rotate - traslate
+        // scale - rotate - traslate
         vector3f_t wp1 = vector3f_mult(lp1, 2);
         vector3f_t wp2 = vector3f_mult(lp2, 2);
         vector3f_t wp3 = vector3f_mult(lp3, 2);
@@ -72,17 +77,21 @@ void draw_suzanne(scene_t* s, float delta_time, bool wire_frame) {
         vector2_t p2 = camera_world_to_screen_space(s->camera, wp2);
         vector2_t p3 = camera_world_to_screen_space(s->camera, wp3);
 
-        if (wire_frame) {
+        if (wire_frame)
+        {
             dda_line_raster(s->screen, p1.x, p1.y, p2.x, p2.y, red); 
             dda_line_raster(s->screen, p1.x, p1.y, p3.x, p3.y, red); 
             dda_line_raster(s->screen, p2.x, p2.y, p3.x, p3.y, red); 
-        } else {
+        }
+        else
+        {
             bbox_triangle_raster(s->screen, p1, p2, p3, red);
         }
     }
 }
 
-void draw_suzanne_scanline(scene_t* s, float delta_time) {
+void draw_suzanne_scanline(scene_t* s, float delta_time)
+{
     color_t red = {255, 0, 0, 255};
 
     vgpu_t gpu;
@@ -95,12 +104,13 @@ void draw_suzanne_scanline(scene_t* s, float delta_time) {
     static float rotation = 0.f;
     rotation +=  2.f * delta_time;
 
-     for(int i=0; i < obj->face_count; ++i) {
+     for(int i=0; i < obj->face_count; ++i)
+     {
         vector3f_t* lp1 = (vector3f_t*)&(obj->triangles[i].v1.position);
         vector3f_t* lp2 = (vector3f_t*)&(obj->triangles[i].v2.position);
         vector3f_t* lp3 = (vector3f_t*)&(obj->triangles[i].v3.position);
 
-        //scale - rotate - traslate
+        // scale - rotate - traslate
         vector3f_t wp1 = vector3f_mult(lp1, 2);
         vector3f_t wp2 = vector3f_mult(lp2, 2);
         vector3f_t wp3 = vector3f_mult(lp3, 2);
@@ -141,7 +151,8 @@ void draw_suzanne_scanline(scene_t* s, float delta_time) {
     }
 }
 
-void draw_quad_texturized(scene_t* s, float delta_time) {
+void draw_quad_texturized(scene_t* s, float delta_time)
+{
     vector3f_t transl = (vector3f_t){0, 0, 4.f};
 
     vgpu_t gpu;
@@ -191,7 +202,8 @@ void draw_quad_texturized(scene_t* s, float delta_time) {
     }
 }
 
-void draw_trup_texturized(scene_t* s, float delta_time) {
+void draw_trup_texturized(scene_t* s, float delta_time)
+{
     static vector3f_t transl = (vector3f_t){0, 0.f, 4.f};
 
     static float rotation = 0.f;
@@ -224,7 +236,7 @@ void draw_trup_texturized(scene_t* s, float delta_time) {
         wp2 = vector3f_sub(&wp2, &transl);
         wp3 = vector3f_sub(&wp3, &transl);
 
-        //Compute World Normals
+        // Compute World Normals
         vector3f_t wn1 = vector3f_rotate_y((vector3f_t*)&(t->v1.normal), rotation);
         vector3f_t wn2 = vector3f_rotate_y((vector3f_t*)&(t->v2.normal), rotation);
         vector3f_t wn3 = vector3f_rotate_y((vector3f_t*)&(t->v3.normal), rotation);
@@ -238,8 +250,11 @@ void draw_trup_texturized(scene_t* s, float delta_time) {
         vector3f_t cp2 = camera_world_to_camera_space(s->camera, &wp2);
         vector3f_t cp3 = camera_world_to_camera_space(s->camera, &wp3);
 
-        if (!triangle_is_within_camera(s->camera, &sp1, cp1.z, &sp2, cp2.z, &sp3, cp3.z)) continue;
-        if (!triangle_is_facing_camera(&cp1, &cp2, &cp3)) continue;
+        if (!triangle_is_within_camera(s->camera, &sp1, cp1.z, &sp2, cp2.z, &sp3, cp3.z))
+        continue;
+
+        if (!triangle_is_facing_camera(&cp1, &cp2, &cp3))
+        continue;
 
         vertex_t v1;
         v1.screen_pos = &sp1;
@@ -268,7 +283,8 @@ void draw_trup_texturized(scene_t* s, float delta_time) {
 
 
 
-void scene_update(scene_t* s, float delta_time) {
+void scene_update(scene_t* s, float delta_time)
+{
     //screen_clear(s->screen);
     screen_clear_color(s->screen, &COLOR_GRAY);
    
@@ -286,7 +302,8 @@ void scene_update(scene_t* s, float delta_time) {
     x2 += speed * delta_time;
 
 
-    //Draw Triangle Edges
+    // Draw Triangle Edges
+
     /*
     dda_line_raster(s->screen, 320, 240, 240, 460, red);  //left
     dda_line_raster(s->screen, 320, 240, 400, 460, red); //right
@@ -298,12 +315,12 @@ void scene_update(scene_t* s, float delta_time) {
     vector2_t p2 = { 240, 460 };
     vector2_t p3 = { 400, 460 };
     */
+
     vector3f_t wp1 = { 0.f, 0.f,   -10 };
     vector3f_t wp2 = { -4.f, -4.f, -10 };
     vector3f_t wp3 = { 4.f, -4.f,  -10 };
 
     color_t green = {0, 255, 0, 255};
-
 
     vector2_t p1 = camera_world_to_screen_space(s->camera, wp1);
     vector2_t p2 = camera_world_to_screen_space(s->camera, wp2);
@@ -320,7 +337,8 @@ void scene_update(scene_t* s, float delta_time) {
     screen_blit(s->screen);
 }
 
-void scene_destroy(scene_t* s) {
+void scene_destroy(scene_t* s)
+{
     screen_free(s->screen);
     obj_parser_free(s->quad);
     obj_parser_free(s->suzanne);

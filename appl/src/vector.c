@@ -8,6 +8,7 @@ vector3f_t vector3f_sub(vector3f_t* v1, vector3f_t* v2)
     r.x = v1->x - v2->x;
     r.y = v1->y - v2->y;
     r.z = v1->z - v2->z;
+
     return r;
 }
 
@@ -19,6 +20,7 @@ vector3f_t vector3f_rotate_y(vector3f_t* v, float degrees)
     result.x = cosf(rads) * v->x - sinf(rads) * v->z;
     result.y = v->y;
     result.z = sinf(rads) * v->x + cosf(rads) * v->z;
+
     return result;
 }
 
@@ -28,12 +30,14 @@ vector3f_t vector3f_mult(vector3f_t* v, float scalar)
     result.x = v->x * scalar;
     result.y = v->y * scalar;
     result.z = v->z * scalar;
+
     return result;
 }
 
 vector3f_t vector3f_norm(vector3f_t* v) 
 {
     float inv_m = 1.f / vector3f_magn(v);
+
     return vector3f_mult(v, inv_m);
 }
 
@@ -52,6 +56,7 @@ vector3f_t vector3f_refl(vector3f_t* i, vector3f_t* n)
     //R = I – 2 * dot(I,N) * N
     float dot2 = 2.f * vector3f_dot(i, n);
     vector3f_t dot2n = vector3f_mult(n, dot2);
+
     return vector3f_sub(i, &dot2n);
 }
 
@@ -61,6 +66,6 @@ vector3f_t vector3f_cross(vector3f_t* v1, vector3f_t* v2)
     r.x = v1->y * v2->z - v1->z * v2->y;
     r.y = v1->z * v2->x - v1->x * v2->z;
     r.z = v1->x * v2->y - v1->y * v2->x;
+
     return r;
 }
-

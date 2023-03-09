@@ -1,7 +1,8 @@
 #pragma once
 #include "SDL.h"
 
-typedef struct {
+typedef struct
+{
     Uint8* data;
     int width;
     int height;

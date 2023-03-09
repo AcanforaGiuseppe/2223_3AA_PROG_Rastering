@@ -3,7 +3,8 @@
 #include "test-utils.h"
 #include "obj-parser.h"
 
-CLOVE_TEST(TestCountObjMeshData) {
+CLOVE_TEST(TestCountObjMeshData)
+{
    const char* base_test_path = CLOVE_EXEC_BASE_PATH();
    const char* source_path = tut_concat_path(base_test_path, "\\resources\\quad.obj");
 
@@ -16,7 +17,8 @@ CLOVE_TEST(TestCountObjMeshData) {
    CLOVE_INT_EQ(2, mesh->face_count);
 }
 
-CLOVE_TEST(TestQuadParse) {
+CLOVE_TEST(TestQuadParse)
+{
    const char* base_test_path = CLOVE_EXEC_BASE_PATH();
    const char* source_path = tut_concat_path(base_test_path, "\\resources\\quad.obj");
 
@@ -95,7 +97,8 @@ CLOVE_TEST(TestQuadParse) {
    CLOVE_FLOAT_EQ(mesh->triangles[1].v3.normal.z, 1.f);
 }
 
-CLOVE_TEST(TestSuzanneVertexesCount) {
+CLOVE_TEST(TestSuzanneVertexesCount)
+{
    const char* base_test_path = CLOVE_EXEC_BASE_PATH();
    const char* source_path = tut_concat_path(base_test_path, "\\resources\\suzanne.obj");
 

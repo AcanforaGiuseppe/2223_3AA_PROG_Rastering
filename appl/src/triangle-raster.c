@@ -7,9 +7,9 @@ bool bbox_is_point_in_triangle(vector2_t P, vector2_t A, vector2_t B, vector2_t 
     b1 = det(P, A, B) < 0;
     b2 = det(P, B, C) < 0;
     b3 = det(P, C, A) < 0;
+
     return (b1 == b2) && (b2 == b3);
 }
-
 
 void bbox_triangle_raster(screen_t* screen, vector2_t p1, vector2_t p2, vector2_t p3, color_t color) 
 {
@@ -24,10 +24,9 @@ void bbox_triangle_raster(screen_t* screen, vector2_t p1, vector2_t p2, vector2_
         for(int y = y_min; y <= y_max; ++y) 
         {   
             vector2_t point = {x, y};
+            
             if (bbox_is_point_in_triangle(point, p1, p2, p3)) 
-            {
                 screen_put_pixel(screen, x, y, 0.f, color);
-            }
         }
     }
 }

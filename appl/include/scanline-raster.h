@@ -5,7 +5,8 @@
 #include "color.h"
 #include "vgpu.h"
 
-typedef struct {
+typedef struct
+{
     vector2_t* screen_pos;
     color_t*  color;
     float z_pos;

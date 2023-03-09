@@ -16,7 +16,8 @@ clang ^
     -o "%BIN_PATH%\appl.lib" "%APPL_PATH%\src\*.c" -fuse-ld=llvm-lib ^
     -D__TEST_BUILD
 
-IF %ERRORLEVEL% NEQ 0 (
+IF %ERRORLEVEL% NEQ 0
+(
     set MESSAGE=Failure compiling appl as library
     GOTO QUIT
 )
@@ -29,12 +30,14 @@ clang ^
     -o "%BIN_PATH%\test.exe" "%PRJ_PATH%\src\*.c" ^
     ^ -L"%BIN_PATH%" -lappl
 
-IF %ERRORLEVEL% NEQ 0 (
+IF %ERRORLEVEL% NEQ 0
+(
     set MESSAGE=Failure compiling test
     GOTO QUIT
 )
 
-IF %ERRORLEVEL% EQU 0 (
+IF %ERRORLEVEL% EQU 0
+(
     XCOPY /E /Q /Y "%PRJ_PATH%\resources\" "%BIN_PATH%\resources\"
 )
 

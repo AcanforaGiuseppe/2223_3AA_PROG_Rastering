@@ -16,7 +16,8 @@ clang ^
     -lSDL2_image ^
     -o "%BIN_PATH%\appl.exe" "%PRJ_PATH%\src\*.c"
 
-IF %ERRORLEVEL% EQU 0 (
+IF %ERRORLEVEL% EQU 0
+(
     COPY /Y "%PRJ_PATH%\libraries\sdl2\lib\x64\*.dll" "%BIN_PATH%"
     COPY /Y "%PRJ_PATH%\libraries\sdl2_image\lib\x64\*.dll" "%BIN_PATH%"
     XCOPY /E /Q /Y "%PRJ_PATH%\resources\" "%BIN_PATH%\resources\"

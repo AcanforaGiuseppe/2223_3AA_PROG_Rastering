@@ -5,19 +5,22 @@
 void _sort_by_y(vertex_t** v1, vertex_t** v2, vertex_t** v3) 
 {   
     vertex_t* temp;
-    if ((*v1)->screen_pos->y > (*v2)->screen_pos->y ) { 
+    if ((*v1)->screen_pos->y > (*v2)->screen_pos->y )
+    { 
         temp = *v1;
         *v1 = *v2;
         *v2 = temp;
     }
 
-    if ((*v2)->screen_pos->y > (*v3)->screen_pos->y ) { 
+    if ((*v2)->screen_pos->y > (*v3)->screen_pos->y )
+    { 
         temp = *v2;
         *v2 = *v3;
         *v3 = temp;
     }
 
-    if ((*v1)->screen_pos->y > (*v2)->screen_pos->y ) { 
+    if ((*v1)->screen_pos->y > (*v2)->screen_pos->y )
+    { 
         temp = *v1;
         *v1 = *v2;
         *v2 = temp;
@@ -36,6 +39,7 @@ color_t _interpolate_color(color_t* c1, color_t* c2, float gradient)
     result.g = (Uint8)_interpolate_scalar((float)c1->g, (float)c2->g, gradient);
     result.b = (Uint8)_interpolate_scalar((float)c1->b, (float)c2->b, gradient);
     result.a = (Uint8)_interpolate_scalar((float)c1->a, (float)c2->a, gradient);
+
     return result;
 }
 
@@ -44,6 +48,7 @@ vector2f_t _interpolate_vector2f(vector2f_t* v1, vector2f_t* v2, float gradient)
     vector2f_t result;
     result.x = _interpolate_scalar(v1->x, v2->x, gradient);
     result.y = _interpolate_scalar(v1->y, v2->y, gradient);
+    
     return result;
 }
 
@@ -53,6 +58,7 @@ vector3f_t _interpolate_vector3f(vector3f_t* v1, vector3f_t* v2, float gradient)
     result.x = _interpolate_scalar(v1->x, v2->x, gradient);
     result.y = _interpolate_scalar(v1->y, v2->y, gradient);
     result.z = _interpolate_scalar(v1->z, v2->z, gradient);
+
     return result;
 }
 
@@ -60,16 +66,14 @@ vector3f_t _interpolate_vector3f(vector3f_t* v1, vector3f_t* v2, float gradient)
 void _interpolate_row(vgpu_t* gpu, int y, vertex_t* left_edge_v1, vertex_t* left_edge_v2, vertex_t* right_edge_v1, vertex_t* right_edge_v2)
 {
     float left_gradient_y = 1.f;
+
     if (left_edge_v1->screen_pos->y != left_edge_v2->screen_pos->y) 
-    {
         left_gradient_y = (float)(y - left_edge_v1->screen_pos->y) / (float)(left_edge_v2->screen_pos->y - left_edge_v1->screen_pos->y);
-    }
 
     float right_gradient_y = 1.f;
+
     if (right_edge_v1->screen_pos->y != right_edge_v2->screen_pos->y) 
-    {
         right_gradient_y = (float)(y - right_edge_v1->screen_pos->y) / (float)(right_edge_v2->screen_pos->y - right_edge_v1->screen_pos->y);
-    }
 
     int left_x = (int)_interpolate_scalar((float) left_edge_v1->screen_pos->x, (float) left_edge_v2->screen_pos->x, left_gradient_y);
     int right_x = (int)_interpolate_scalar((float) right_edge_v1->screen_pos->x, (float) right_edge_v2->screen_pos->x, right_gradient_y);
@@ -79,6 +83,7 @@ void _interpolate_row(vgpu_t* gpu, int y, vertex_t* left_edge_v1, vertex_t* left
 
     color_t left_color;
     color_t right_color;
+
     if (gpu->flags & VGPU_FLAG_COLOR) 
     {
         left_color = _interpolate_color(left_edge_v1->color, left_edge_v2->color, left_gradient_y);
@@ -87,6 +92,7 @@ void _interpolate_row(vgpu_t* gpu, int y, vertex_t* left_edge_v1, vertex_t* left
     
     vector2f_t left_uv;
     vector2f_t right_uv;
+
     if (gpu->flags & VGPU_FLAG_TEXTURE) 
     {
         left_uv = _interpolate_vector2f(left_edge_v1->text_coord, left_edge_v2->text_coord, left_gradient_y);
@@ -102,25 +108,24 @@ void _interpolate_row(vgpu_t* gpu, int y, vertex_t* left_edge_v1, vertex_t* left
     for(int x = left_x; x <= right_x; ++x) 
     {
         float gradient_x = 1.f;
+
         if (left_x < right_x) 
-        {
             gradient_x = (float)(x - left_x) / (float)(right_x - left_x);
-        }
+
         float sampled_z = _interpolate_scalar(left_z, right_z, gradient_x);
 
         color_t sampled_color;
+
         if (gpu->flags & VGPU_FLAG_COLOR) 
-        {
             sampled_color = _interpolate_color(&left_color, &right_color, gradient_x);
-        } 
         
         if (gpu->flags & VGPU_FLAG_TEXTURE) 
         {
             vector2f_t uv = _interpolate_vector2f(&left_uv, &right_uv, gradient_x);
             texture_t* text = gpu->texture;
 
-            int text_x = (int)( (float)text->width * uv.x ) % text->width; //protect and take account for uv rolling 
-            int text_y = (int)( (float)text->height * (1.f - uv.y)) % text->height; //protect and take account for uv rolling
+            int text_x = (int)( (float)text->width * uv.x ) % text->width; // protect and take account for uv rolling 
+            int text_y = (int)( (float)text->height * (1.f - uv.y)) % text->height; // protect and take account for uv rolling
 
             int text_index = (text_y * text->width + text_x) * text->pixel_size;
             sampled_color.r = text->data[text_index + 0];
@@ -129,12 +134,12 @@ void _interpolate_row(vgpu_t* gpu, int y, vertex_t* left_edge_v1, vertex_t* left
             sampled_color.a = text->data[text_index + 3];
         }
 
-        //Compute Phong
-        //1. Ambient
+        // Compute Phong
+        // 1. Ambient
         float ambiente_intensity = 0.1f;
         color_t ambient = color_mult(&sampled_color, ambiente_intensity);
 
-        //2. Diffuse
+        // 2. Diffuse
         vector3f_t world_pos = _interpolate_vector3f(&left_world_pos, &right_world_pos, gradient_x);
         vector3f_t dir_to_light = vector3f_sub(gpu->point_light_pos, &world_pos);
         dir_to_light = vector3f_norm(&dir_to_light);
@@ -146,7 +151,7 @@ void _interpolate_row(vgpu_t* gpu, int y, vertex_t* left_edge_v1, vertex_t* left
         float lambert = clampf(cosLN, 0.f, 1.f);
         color_t diffuse = color_mult(&sampled_color, lambert);
 
-        //3. Specular
+        // 3. Specular
         vector3f_t dir_to_eye = vector3f_sub(gpu->camera_pos, &world_pos);
         dir_to_eye = vector3f_norm(&dir_to_eye);
 
@@ -184,14 +189,10 @@ void scanline_raster(vgpu_t* gpu, vertex_t* v1, vertex_t* v2, vertex_t* v3)
     {
         for(int y = p1->y; y <= p3->y; ++y) 
         {
-            if (y < p2->y) //phase1: upper triangle: left: p1p2 right p1p3
-            { 
+            if (y < p2->y) // phase1: upper triangle: left: p1p2 right p1p3
                 _interpolate_row(gpu, y, v1,v2, v1,v3);
-            } 
-            else //phase2: lower triangle: left: p2p3 right p1p3
-            { 
+            else // phase2: lower triangle: left: p2p3 right p1p3
                 _interpolate_row(gpu, y, v2,v3, v1,v3);
-            }
         }
     } 
     else // |>
@@ -199,13 +200,9 @@ void scanline_raster(vgpu_t* gpu, vertex_t* v1, vertex_t* v2, vertex_t* v3)
          for(int y = p1->y; y <= p3->y; ++y) 
         {
             if (y < p2->y) //phase1: upper triangle: left: p1p3 right p1p2
-            { 
                 _interpolate_row(gpu, y, v1,v3, v1,v2);
-            } 
             else //phase2: lower triangle: left: p1p3 right p2p3
-            { 
                 _interpolate_row(gpu, y, v1,v3, v2,v3);
-            }
         }
     }
 }
